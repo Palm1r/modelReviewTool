@@ -1,0 +1,9 @@
+[submodule "3rdparty/bgfx.cmake"]
+	path = 3rdparty/bgfx.cmake
+	url = ../bgfx.cmake.git
+[submodule "3rdparty/brtshaderc"]
+	path = 3rdparty/brtshaderc
+	url = ../../fredakilla/brtshaderc.git
+[submodule "3rdparty/glm"]
+	path = 3rdparty/glm
+	url = ../../g-truc/glm.git
