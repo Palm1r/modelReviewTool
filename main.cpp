@@ -8,6 +8,7 @@
 #include <bx/bx.h>
 #include <bx/math.h>
 #include <debugdraw/debugdraw.h>
+#include <entt/entt.hpp>
 
 //init_example initialize bgfx from a gien bgfx::Init
 void init_example(const bgfx::Init& init)

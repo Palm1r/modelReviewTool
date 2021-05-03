@@ -7,3 +7,6 @@
 [submodule "3rdparty/glm"]
 	path = 3rdparty/glm
 	url = ../../g-truc/glm.git
+[submodule "3rdparty/entt"]
+	path = 3rdparty/entt
+	url = ../../skypjack/entt.git

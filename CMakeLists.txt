@@ -28,6 +28,7 @@ set(INSTALL_EXAMPLEDIR "modelReviewTool")
 
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core Quick #[[LinguistTools]] REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Quick #[[LinguistTools]] REQUIRED)
+find_package(EnTT CONFIG REQUIRED)
 
 set(TS_FILES modelReviewTool_en_US.ts)
 
@@ -77,6 +78,7 @@ target_link_libraries(modelReviewTool
     bimg
     example-common
     glm
+    EnTT::EnTT
     )
 target_include_directories(modelReviewTool
     PUBLIC
