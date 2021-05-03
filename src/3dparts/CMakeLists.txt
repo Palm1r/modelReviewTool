@@ -1,0 +1,13 @@
+target_sources(modelReviewTool
+        PUBLIC
+        camera.cpp
+        camera.h
+        model.cpp
+        model.h
+        shader.cpp
+        shader.h
+        transform.cpp
+        transform.h
+        types.h
+        binary_reader.h
+        )

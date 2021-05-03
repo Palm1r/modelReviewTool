@@ -40,6 +40,8 @@ set(PROJECT_SOURCES
         src/qbgfx.cpp
         src/qsgbgfxnode/qsgbgfxnode.h
         src/qsgbgfxnode/qsgbgfxnode.cpp
+        src/openfbx/ofbx.h
+        src/openfbx/ofbx.cpp
         ${TS_FILES}
 )
 
@@ -103,3 +105,4 @@ install(TARGETS modelReviewTool
 
 qt6_qml_type_registration(modelReviewTool)
 add_subdirectory(3rdparty)
+add_subdirectory(src/3dparts)
