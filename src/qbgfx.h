@@ -34,6 +34,10 @@ public:
 
     ~QBgfx();
 
+public slots:
+    void init_example(const bgfx::Init &init);
+    void render_example();
+
 private slots:
     void renderFrame();
     void shutdown();
@@ -44,8 +48,8 @@ signals:
     void initialized(bgfx::Init &);
 
 private:
-    std::vector<QQuickBgfxItem *> m_bgfxItems;
     QQuickWindow *m_window{nullptr};
+    std::vector<QQuickBgfxItem *> m_bgfxItems;
     bgfx::Init m_bgfxInit;
 };
 }    // namespace QQuickBgfx
