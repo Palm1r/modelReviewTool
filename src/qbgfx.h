@@ -6,6 +6,7 @@
 #include <QObject>
 
 #include <vector>
+#include <cubes.h>
 
 class QQmlEngine;
 class QQuickWindow;
@@ -51,5 +52,6 @@ private:
     QQuickWindow *m_window{nullptr};
     std::vector<QQuickBgfxItem *> m_bgfxItems;
     bgfx::Init m_bgfxInit;
+    ExampleCubes bgfxExample;
 };
 }    // namespace QQuickBgfx

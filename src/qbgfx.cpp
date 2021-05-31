@@ -14,6 +14,7 @@
 #include <bx/math.h>
 #include <debugdraw/debugdraw.h>
 #include <entt/entt.hpp>
+//#include <logo.h>
 
 #ifdef __linux__
 #include <QOpenGLContext>
@@ -54,8 +55,11 @@ void QBgfx::init_example(const bgfx::Init& init)
     {
         bgfx::renderFrame();
         bgfx::init(init);
-        bgfx::setDebug(BGFX_DEBUG_TEXT);
+        bgfx::setViewClear(0, BGFX_CLEAR_COLOR|BGFX_CLEAR_DEPTH, 0x303030ff, 1.0f, 0);
+
+//        bgfx::setDebug(BGFX_DEBUG_TEXT);
         ddInit();
+        bgfxExample.init();
     }
 }
 
@@ -65,45 +69,26 @@ void QBgfx::render_example()
     {
         if (item->viewId() < 256)
         {
-            float r{0.0f};
-            float g{0.0f};
-            float b{0.0f};
-            auto c = item->backgroundColor();
-            c.setHslF(c.hueF(), c.saturationF(), c.lightnessF() * std::clamp(item->mousePosition()[1] / (float)item->height(), 0.0f, 1.0f));
-            c.getRgbF(&r, &g, &b);
-
-            const uint32_t color = uint8_t(r * 255) << 24 | uint8_t(g * 255) << 16 | uint8_t(b * 255) << 8 | 255;
-
-            bgfx::setViewClear(item->viewId(), BGFX_CLEAR_COLOR|BGFX_CLEAR_DEPTH, color, 1.0f, 0);
-            bgfx::touch(item->viewId());
-
             const auto w = item->dprWidth();
             const auto h = item->dprHeight();
-            static float time{0.0f};
-            time += 0.003f;
 
-            const bx::Vec3 at  = { 0.0f, 0.0f,   0.0f };
-            const bx::Vec3 eye = { std::clamp(item->mousePosition()[0]/ (float)item->width()-0.5f, -0.5f, 0.5f) * 15.0f, 0.0f, std::clamp(item->mousePosition()[1] / (float)item->height()-0.5f, -0.5f, 0.5f) * 15.0f };
+            bgfxExample.setSize(w, h);
+            bgfxExample.update();
 
-            float view[16];
-            bx::mtxLookAt(view, eye, at);
+//            float r{0.0f};
+//            float g{0.0f};
+//            float b{0.0f};
+//            auto c = item->backgroundColor();
+//            c.setHslF(c.hueF(), c.saturationF(), c.lightnessF() * std::clamp(item->mousePosition()[1] / (float)item->height(), 0.0f, 1.0f));
+//            c.getRgbF(&r, &g, &b);
 
-            float proj[16];
-            bx::mtxProj(proj, 60.0f, float(w)/float(h), 0.1f, 100.0f, bgfx::getCaps()->homogeneousDepth);
-            qDebug() << "item view id"<< item->viewId();
-            bgfx::setViewTransform(item->viewId(), view, proj);
-            bgfx::setViewRect(item->viewId(), 0, 0, uint16_t(w), uint16_t(h) );
+//            const uint32_t color = uint8_t(r * 255) << 24 | uint8_t(g * 255) << 16 | uint8_t(b * 255) << 8 | 255;
 
-            float mtx[16];
-            bx::mtxRotateXY(mtx, time, time);
-            DebugDrawEncoder dde;
-            dde.begin(item->viewId());
-            dde.drawCapsule({-2.0f, -2.0f, 0.0f}, {-2.0f, 0.0f, 0.0f}, 1.0);
-            dde.drawCone({3.0f, -2.0f, 0.0f}, {3.0f, 2.0f, 0.0f}, 1.0f);
-            dde.drawAxis(0.0f, 0.0f, 0.0f);
-            dde.setTransform(&mtx);
-            dde.draw(Aabb{{0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}});
-            dde.end();
+//            bgfx::setViewRect(item->viewId(), 0, 0, uint16_t(w), uint16_t(h) );
+//            bgfx::touch(item->viewId());
+
+
+//            bgfx::frame();
         }
     }
 }

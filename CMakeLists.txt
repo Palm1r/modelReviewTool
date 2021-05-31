@@ -43,6 +43,7 @@ set(PROJECT_SOURCES
         src/qsgbgfxnode/qsgbgfxnode.cpp
         src/openfbx/ofbx.h
         src/openfbx/ofbx.cpp
+        src/cubes.h
         ${TS_FILES}
 )
 
