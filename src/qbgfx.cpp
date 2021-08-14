@@ -32,7 +32,12 @@ QBgfx::QBgfx(QQuickWindow *w, const QList<QQuickBgfxItem *> items): m_window(w)
     connect(m_window, &QQuickWindow::beforeFrameBegin, this, &QBgfx::init, Qt::DirectConnection);
     connect(m_window, &QQuickWindow::beforeRenderPassRecording, this, &QBgfx::renderFrame, Qt::DirectConnection);
     //Free standing function instead will always be called from the signal thread
-    connect(m_window, &QQuickWindow::afterRenderPassRecording, QQuickBgfx::frame);
+    connect(m_window, &QQuickWindow::afterRenderPassRecording,[](){
+        if (isBgfxInit())
+        {
+            bgfx::frame();
+        }
+    });
     //    connect(QGuiApplication::instance(), &QGuiApplication::aboutToQuit, this, &Renderer::shutdown, Qt::QueuedConnection);
 
     //Connection to initialized signal allows to decouple the bgfx initialization from the qquick_bgfx::QBgfx wrapper
