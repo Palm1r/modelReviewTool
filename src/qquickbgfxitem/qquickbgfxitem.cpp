@@ -1,7 +1,7 @@
 #include "qquickbgfxitem.h"
 
-#include "qsgbgfxnode/qsgbgfxnode.h"
 #include "qbgfx.h"
+#include "qsgbgfxnode/qsgbgfxnode.h"
 
 QQuickBgfxItem::QQuickBgfxItem()
 {

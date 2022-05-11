@@ -12,8 +12,8 @@
 #include <bgfx/bgfx.h>
 #include <bx/bx.h>
 #include <bx/math.h>
-#include <debugdraw/debugdraw.h>
-#include <entt/entt.hpp>
+//#include <debugdraw/debugdraw.h>
+//#include <entt/entt.hpp>
 //#include <logo.h>
 
 #ifdef __linux__
@@ -63,7 +63,7 @@ void QBgfx::init_example(const bgfx::Init& init)
         bgfx::setViewClear(0, BGFX_CLEAR_COLOR|BGFX_CLEAR_DEPTH, 0x303030ff, 1.0f, 0);
 
 //        bgfx::setDebug(BGFX_DEBUG_TEXT);
-        ddInit();
+//        ddInit();
         bgfxExample.init();
     }
 }

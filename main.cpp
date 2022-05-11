@@ -7,8 +7,8 @@
 #include <bgfx/bgfx.h>
 #include <bx/bx.h>
 #include <bx/math.h>
-#include <debugdraw/debugdraw.h>
-#include <entt/entt.hpp>
+//#include <debugdraw/debugdraw.h>
+//#include <entt/entt.hpp>
 
 int main(int argc, char **argv)
 {
@@ -28,10 +28,10 @@ int main(int argc, char **argv)
 
     QQuickView view;
     view.setResizeMode(QQuickView::SizeRootObjectToView);
-    view.setSource(QUrl("qrc:/main.qml"));
+    view.setSource(QUrl(u"qrc:/modelReviewTool/main.qml"_qs));
     view.show();
 
-    const auto qbgfx = QQuickBgfx::QBgfx(static_cast<QQuickWindow*>(&view), view.rootObject()->findChildren<QQuickBgfxItem*>());
+//    const auto qbgfx = QQuickBgfx::QBgfx(static_cast<QQuickWindow*>(&view), view.rootObject()->findChildren<QQuickBgfxItem*>());
     
     return app.exec();
 }
