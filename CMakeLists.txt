@@ -32,8 +32,6 @@ set(TS_FILES modelReviewTool_en_US.ts)
 
 qt_add_executable(appmodelReviewTool
     main.cpp
-    src/qquickbgfxitem/qquickbgfxitem.h
-    src/qquickbgfxitem/qquickbgfxitem.cpp
     src/qbgfx.h
     src/qbgfx.cpp
     src/qsgbgfxnode/qsgbgfxnode.h
@@ -48,6 +46,10 @@ qt_add_qml_module(appmodelReviewTool
     URI modelReviewTool
     VERSION 1.0
     QML_FILES main.qml
+    SOURCES
+    src/qquickbgfxitem/qquickbgfxitem.h
+    src/qquickbgfxitem/qquickbgfxitem.cpp
+
 )
 
 #    qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
@@ -62,6 +64,8 @@ target_link_libraries(appmodelReviewTool
     bimg
 #    example-common
     glm)
+
+target_compile_definitions(appmodelReviewTool PUBLIC SHADER_PARTH="${CMAKE_CURRENT_SOURCE_DIR}")
 
 target_include_directories(appmodelReviewTool
     PUBLIC

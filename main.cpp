@@ -31,7 +31,7 @@ int main(int argc, char **argv)
     view.setSource(QUrl(u"qrc:/modelReviewTool/main.qml"_qs));
     view.show();
 
-//    const auto qbgfx = QQuickBgfx::QBgfx(static_cast<QQuickWindow*>(&view), view.rootObject()->findChildren<QQuickBgfxItem*>());
+    const auto qbgfx = QQuickBgfx::QBgfx(static_cast<QQuickWindow*>(&view), view.rootObject()->findChildren<QQuickBgfxItem*>());
     
     return app.exec();
 }

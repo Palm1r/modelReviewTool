@@ -1,5 +1,7 @@
 #pragma once
 #include <QQuickItem>
+#include <QtQml/qqmlregistration.h>
+
 
 class QSGBgfxNode;
 
@@ -10,7 +12,7 @@ class QQuickBgfxItem : public QQuickItem
     Q_OBJECT
     Q_PROPERTY(int viewId READ viewId WRITE setViewId NOTIFY viewIdChanged)
     Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor NOTIFY backgroundColorChanged)
-    QML_NAMED_ELEMENT(BgfxItem)
+    QML_ELEMENT
 
 public:
     QQuickBgfxItem();

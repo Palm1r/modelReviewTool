@@ -234,15 +234,14 @@ public:
 			);
 
         // Create program from shaders.
-//        #define SHADER_PATH "D:\\projects\\qt-rhi-bgfx\\"
-//        if (bgfxGlobal.m_backend == bgfx::RendererType::Direct3D11)
-//        {
-            m_program = loadProgram("D:\\projects\\qt-rhi-bgfx\\bin\\dx11\\cubes.vert.bin", "D:\\projects\\qt-rhi-bgfx\\bin\\dx11\\cubes.frag.bin");
-//        }
-//        else
-//        {
-//            m_program = loadProgram(SHADER_PATH "bin\\glsl\\cubes.vert.bin", SHADER_PATH "bin\\glsl\\cubes.frag.bin");
-//        }
+        if (bgfx::getRendererType() == bgfx::RendererType::Direct3D11)
+        {
+            m_program = loadProgram(SHADER_PARTH "\\bin\\dx11\\cubes.vert.bin", SHADER_PARTH "\\bin\\dx11\\cubes.frag.bin");
+        }
+        else if (bgfx::getRendererType() == bgfx::RendererType::OpenGL)
+        {
+            m_program = loadProgram(SHADER_PARTH "/bin/glsl/cubes.vert.bin", SHADER_PARTH "/bin/glsl/cubes.frag.bin");
+        }
 		
 		m_timeOffset = bx::getHPCounter();
 		m_pt = 0;
@@ -250,10 +249,6 @@ public:
 
 	virtual int shutdown()
 	{
-		/*
-		imguiDestroy();
-		*/
-
 		// Cleanup.
 		for (uint32_t ii = 0; ii < BX_COUNTOF(m_ibh); ++ii)
 		{
@@ -264,7 +259,7 @@ public:
 		bgfx::destroy(m_program);
 
 		// Shutdown bgfx.
-		//bgfx::shutdown();
+        bgfx::shutdown();
 
 		return 0;
 	}
@@ -349,10 +344,6 @@ public:
 		return false;
 		*/
 	}
-
-	/*
-	entry::MouseState m_mouseState;
-	*/
 
 	uint32_t m_width;
 	uint32_t m_height;

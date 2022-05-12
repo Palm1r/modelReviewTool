@@ -6,7 +6,7 @@
 
 #include <QList>
 #include <QQuickWindow>
-//#include <QGuiApplication>
+#include <QGuiApplication>
 #include <stdexcept>
 
 #include <bgfx/bgfx.h>
@@ -38,7 +38,7 @@ QBgfx::QBgfx(QQuickWindow *w, const QList<QQuickBgfxItem *> items): m_window(w)
             bgfx::frame();
         }
     });
-    //    connect(QGuiApplication::instance(), &QGuiApplication::aboutToQuit, this, &Renderer::shutdown, Qt::QueuedConnection);
+    connect(QGuiApplication::instance(), &QGuiApplication::aboutToQuit, this, &QBgfx::shutdown, Qt::QueuedConnection);
 
     //Connection to initialized signal allows to decouple the bgfx initialization from the qquick_bgfx::QBgfx wrapper
     QObject::connect(this, &QBgfx::initialized, &QBgfx::init_example);
@@ -51,7 +51,7 @@ QBgfx::QBgfx(QQuickWindow *w, const QList<QQuickBgfxItem *> items): m_window(w)
 
 QBgfx::~QBgfx()
 {
-    //    shutdown();
+    shutdown();
 }
 
 void QBgfx::init_example(const bgfx::Init& init)
