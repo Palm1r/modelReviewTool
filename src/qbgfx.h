@@ -6,6 +6,7 @@
 #include <QObject>
 
 #include <vector>
+#include <cubes.h>
 
 #include "3dparts/model.h"
 #include "3dparts/shader.h"
@@ -62,15 +63,6 @@ private:
     QQuickWindow *m_window{nullptr};
     std::vector<QQuickBgfxItem *> m_bgfxItems;
     bgfx::Init m_bgfxInit;
-
-    Model m_model;
-    ofbx::IScene* g_scene = nullptr;
-    bool initModel = false;
-    std::shared_ptr<Shader> program;
-    bgfx::UniformHandle u_diffuse_color = BGFX_INVALID_HANDLE;
-
-//    // todo put these into base class
-    entt::registry scene;
-    entt::entity camera;
+    ExampleCubes bgfxExample;
 };
 }    // namespace QQuickBgfx
