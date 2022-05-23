@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>Helmet.fbx</file>
     </qresource>
 </RCC>

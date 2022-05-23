@@ -5,6 +5,7 @@
 #include <bgfx/bgfx.h>
 
 #include <QList>
+#include <QFile>
 #include <QQuickWindow>
 #include <QGuiApplication>
 #include <stdexcept>
@@ -12,12 +13,19 @@
 #include <bgfx/bgfx.h>
 #include <bx/bx.h>
 #include <bx/math.h>
+
 //#include <debugdraw/debugdraw.h>
 //#include <entt/entt.hpp>
 //#include <logo.h>
 
+
 #ifdef __linux__
 #include <QOpenGLContext>
+#endif
+
+#ifdef __APPLE__
+#include <Cocoa/Cocoa.h>
+#include <QuartzCore/CAMetalLayer.h>
 #endif
 
 #ifdef _WIN32
@@ -43,7 +51,7 @@ QBgfx::QBgfx(QQuickWindow *w, const QList<QQuickBgfxItem *> items): m_window(w)
     //Connection to initialized signal allows to decouple the bgfx initialization from the qquick_bgfx::QBgfx wrapper
     QObject::connect(this, &QBgfx::initialized, &QBgfx::init_example);
     //Connection to render signal allows to decouple the rendering code from the qquick_bgfx::QBgfx wrapper
-    QObject::connect(this, &QBgfx::render, &QBgfx::render_example);
+    QObject::connect(this, &QBgfx::render, &QBgfx::render_scene);
 
     m_bgfxItems.reserve(m_bgfxItems.size());
     m_bgfxItems.insert(m_bgfxItems.end(), items.begin(), items.end());
@@ -52,6 +60,136 @@ QBgfx::QBgfx(QQuickWindow *w, const QList<QQuickBgfxItem *> items): m_window(w)
 QBgfx::~QBgfx()
 {
     shutdown();
+}
+
+void QBgfx::open_fbx(const QString &url)
+{
+    //    QFile fbxfile(url);
+    //    qDebug() << "fbxfile exist" << fbxfile.exists();
+    //    if (!fbxfile.open(QIODevice::ReadOnly))
+    //        return;
+
+    //    auto* content = new ofbx::u8[fbxfile.size()];
+
+
+    //    g_scene = ofbx::load((ofbx::u8*)content, fbxfile.size(), (ofbx::u64)ofbx::LoadFlags::TRIANGULATE);
+
+    FILE* fp = std::fopen("D:\\projects\\modelReviewTool\\Helmet.fbx", "rb");
+
+    if (!fp) {
+        qDebug() << "file not open";
+    }
+
+    fseek(fp, 0, SEEK_END);
+    long file_size = ftell(fp);
+    fseek(fp, 0, SEEK_SET);
+    auto* content = new ofbx::u8[file_size];
+    fread(content, 1, file_size, fp);
+    g_scene = ofbx::load((ofbx::u8*)content, file_size, (ofbx::u64)ofbx::LoadFlags::TRIANGULATE);
+
+    if (!g_scene) {
+        qDebug() << "scene not open" << url << file_size;
+        OutputDebugString(ofbx::getError());
+    }
+    fclose(fp);
+    //    fbxfile.close();
+}
+
+void QBgfx::load_model(const QString &url)
+{
+    open_fbx("D:\\projects\\modelReviewTool\\Helmet.fbx");
+
+    std::vector<MeshDataTuple> mdt;
+
+    if (!g_scene) {
+        qDebug() << "scene not open";
+        OutputDebugString(ofbx::getError());
+    }
+
+    for(auto mesh_idx = 0; mesh_idx < g_scene->getMeshCount(); ++mesh_idx) {
+        const auto* mesh = g_scene->getMesh(mesh_idx);
+        const auto* geometry = mesh->getGeometry();
+
+        std::vector<Vertex> vertices;
+        std::vector<u16> indices;
+
+        // for now, VertexCount == IndexCount because of default triangulation
+        for(auto face_idx = 0; face_idx < geometry->getIndexCount(); ++face_idx) {
+            const auto vert_idx = [=]() {
+                const auto idx = geometry->getFaceIndices()[face_idx];
+                return idx < 0 ? -idx - 1 : idx;
+            }();
+
+                auto vertex = Vertex{
+                    {
+                        geometry->getVertices()[vert_idx].x,
+                        geometry->getVertices()[vert_idx].y,
+                        geometry->getVertices()[vert_idx].z,
+                        },
+                    {
+                        geometry->getNormals()[face_idx].x,
+                        geometry->getNormals()[face_idx].y,
+                        geometry->getNormals()[face_idx].z,
+                        },
+                    // todo: handle models that don't specify uvs
+                    geometry->getUVs(0)
+                        ? glm::vec2{geometry->getUVs(0)[face_idx].x, geometry->getUVs(0)[face_idx].y}
+                        : glm::vec2{0, 0}
+                };
+
+            vertices.emplace_back(vertex);
+            indices.push_back(indices.size());
+        }
+
+        // todo: use ref
+        const auto layout = Vertex::get_layout();
+        auto vbh = bgfx::createVertexBuffer(bgfx::copy(vertices.data(), sizeof(Vertex) * vertices.size()), layout);
+        auto ibh = bgfx::createIndexBuffer(bgfx::copy(indices.data(), sizeof(u16) * indices.size()));
+
+        // todo: other material params
+        glm::vec4 diffuse;
+        const auto mesh_mat_cnt = mesh->getMaterialCount();
+        if(mesh_mat_cnt == 0)
+            diffuse = {.9, .6, .8, 1};
+        else if(mesh_mat_cnt == 1) {
+            const auto color = mesh->getMaterial(0)->getDiffuseColor();
+            diffuse = {color.r, color.g, color.b, 1};
+        }
+        else {
+            assert(geometry->getMaterials());
+            // todo: handle multiple materials
+            //const auto face_num = geometry->getIndexCount();
+            //const auto len_mat_array = face_num / 3;
+            //const auto mat_id = geometry->getMaterials()[vert_idx / 3];
+            const auto mat_id = 0;
+            const auto color = mesh->getMaterial(mat_id)->getDiffuseColor();
+            diffuse = {color.r, color.g, color.b, 1};
+        }
+
+        auto matrix = mesh->getGlobalTransform();
+        glm::mat4 trans;
+
+        //for(auto row = 0; row < 4; ++row)
+        //    for(auto col = 0; col < 4; ++col)
+        //        trans[col][row] = matrix.m[row+col*4];
+
+        for(auto i = 0; i < 16; ++i)
+            trans[i / 4][i % 4] = matrix.m[i];
+
+        // todo: consider pre-multiplying model matrix
+        // init scale = 100, don't know why
+        trans *= .01;
+        trans[3][3] = 1;
+
+        mdt.emplace_back(MeshDataTuple{vbh, ibh, diffuse, trans});
+    }
+
+    m_model.mdt = std::move(mdt);
+    //    m_model.vertices = std::move(vertices);
+    //    m_model.indices = std::move(indices);
+    //    m_model.vbh = vbh;
+    //    m_model.ibh = ibh;
+    qDebug() << "size" << m_model.mdt.size();
 }
 
 void QBgfx::init_example(const bgfx::Init& init)
@@ -70,6 +208,14 @@ void QBgfx::init_example(const bgfx::Init& init)
 
 void QBgfx::render_example()
 {
+    if (!initModel) {
+        qDebug() << "init model";
+        load_model(":/Helmet.fbx");
+        u_diffuse_color = bgfx::createUniform("u_diffuse_color", bgfx::UniformType::Vec4);
+
+        initModel = true;
+    }
+
     for(const auto item : m_bgfxItems)
     {
         if (item->viewId() < 256)
@@ -94,7 +240,40 @@ void QBgfx::render_example()
 
 
 //            bgfx::frame();
+
         }
+    }
+}
+
+void QBgfx::render_scene()
+{
+    if (!initModel) {
+        qDebug() << "init model";
+        load_model(":/Helmet.fbx");
+        u_diffuse_color = bgfx::createUniform("u_diffuse_color", bgfx::UniformType::Vec4);
+
+        auto teapot = scene.create();
+        scene.emplace<Transform>(teapot);
+
+        camera = scene.create();
+        scene.emplace<Camera>(camera, Camera::perspective(glm::radians(60.f), (float)(m_bgfxItems[0]->dprWidth() / m_bgfxItems[0]->dprHeight()), .1f, 300.f));
+        scene.emplace<Transform>(camera, Transform::look_at(
+                                             glm::vec3(-15, 15, -20),
+                                             glm::vec3(0, 0, 0)
+                                             ));
+
+        initModel = true;
+    }
+
+    for(const auto item : m_bgfxItems)
+    {
+        glm::mat4 view = scene.get<Transform>(camera).view_matrix();
+        glm::mat4 proj = scene.get<Camera>(camera).matrix();
+        bgfx::setViewTransform(item->viewId(), glm::value_ptr(view), glm::value_ptr(proj));
+        bgfx::setViewRect(item->viewId(), 0, 0, uint16_t(item->dprWidth()), uint16_t(item->dprHeight()) );
+
+        const bx::Vec3 at  = { 0.0f, 0.0f,   0.0f };
+        const bx::Vec3 eye = { std::clamp(item->mousePosition()[0]/ (float)item->width()-0.5f, -0.5f, 0.5f) * 15.0f, 0.0f, std::clamp(item->mousePosition()[1] / (float)item->height()-0.5f, -0.5f, 0.5f) * 15.0f };
     }
 }
 
