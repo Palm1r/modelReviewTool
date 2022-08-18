@@ -1,4 +1,4 @@
-target_sources(modelReviewTool
+target_sources(appmodelReviewTool
         PUBLIC
         camera.cpp
         camera.h
