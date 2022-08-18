@@ -26,7 +26,7 @@ set(INSTALL_EXAMPLEDIR "modelReviewTool")
 #    endif()
 #endif()
 
-find_package(Qt6 6.2 COMPONENTS Core Quick #[[LinguistTools]] REQUIRED)
+find_package(Qt6 6.3 COMPONENTS Core Quick #[[LinguistTools]] REQUIRED)
 
 set(TS_FILES modelReviewTool_en_US.ts)
 
@@ -36,8 +36,6 @@ qt_add_executable(appmodelReviewTool
     src/qbgfx.cpp
     src/qsgbgfxnode/qsgbgfxnode.h
     src/qsgbgfxnode/qsgbgfxnode.cpp
-    src/openfbx/ofbx.h
-    src/openfbx/ofbx.cpp
     src/cubes.h
     ${TS_FILES}
 )
@@ -49,7 +47,6 @@ qt_add_qml_module(appmodelReviewTool
     SOURCES
     src/qquickbgfxitem/qquickbgfxitem.h
     src/qquickbgfxitem/qquickbgfxitem.cpp
-
 )
 
 #    qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
@@ -93,4 +90,3 @@ install(TARGETS appmodelReviewTool
 )
 
 add_subdirectory(3rdparty)
-add_subdirectory(src/3dparts)

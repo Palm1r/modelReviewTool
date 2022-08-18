@@ -12,7 +12,7 @@
 #include "3dparts/shader.h"
 #include "3dparts/transform.h"
 #include "3dparts/camera.h"
-#include <entt/entt.hpp>
+//#include <entt/entt.hpp>
 #include <openfbx/ofbx.h>
 
 class QQmlEngine;
@@ -42,13 +42,13 @@ public:
 
     ~QBgfx();
 
-    void open_fbx(const QString &url);
-    void load_model(const QString& url);
+//    void open_fbx(const QString &url);
+//    void load_model(const QString& url);
 
 public slots:
     void init_example(const bgfx::Init &init);
     void render_example();
-    void render_scene();
+//    void render_scene();
 
 private slots:
     void renderFrame();
